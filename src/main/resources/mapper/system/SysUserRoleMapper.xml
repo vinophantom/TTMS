@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.tedu.ttms.system.dao.SysUserRoleDao">
+	<!-- 判断是否有用户占用此角色 -->
+	<select id="isUsedByUser" 
+	        parameterType="integer" 
+	        resultType="integer">
+		select
+			count(*)
+		from
+			sys_user_roles
+		where
+		 	role_id = #{roleId}
+	</select>
+	<!-- 保存用户角色关系 -->
+	<insert id="insertObject">
+		insert into 
+			sys_user_roles(user_id,role_id)
+		values
+		<foreach collection="roleIds" separator="," item="item">
+			(#{userId},#{item})
+		</foreach>
+	</insert>
+	<!-- 查询用户的所有角色id -->
+	<select id="findRoleIdsByUserId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+		select
+			role_id
+		from
+		 	sys_user_roles
+		 where
+		 	user_id = #{id}
+	</select>
+	<!-- 删除用户角色关系 -->
+	<delete id="deleteUserRoles" parameterType="java.lang.Integer">
+		delete from sys_user_roles where user_id = #{id}
+	</delete>
+</mapper>

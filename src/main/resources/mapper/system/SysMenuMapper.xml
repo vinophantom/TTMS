@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.tedu.ttms.system.dao.SysMenuDao">
+	<!-- 查询所有 -->
+	<select id="findObjects" resultType="map">
+		select
+			m.*,
+		    (select p.name from sys_menus p where p.id = m.parentId) as parentName 
+		from
+			sys_menus m
+	</select>
+	
+	<!-- 分页统计 -->
+	<select id="getRowCount" resultType="java.lang.Integer">
+		select 
+			count(*)
+		from
+			sys_menus
+		where
+			parentId is null
+	</select>
+	<!-- 查询所有，用于展示选择菜单树结构 -->
+	<select id="findZtreeNodes" resultType="map">
+		select
+			id,
+			name,
+			parentId
+		from
+			sys_menus
+	</select>
+	<!-- 保存操作 -->
+	<insert id="insertObject" 
+	        parameterType="cn.tedu.ttms.system.entity.SysMenu">
+		insert into
+			sys_menus(name,url,type,sort,parentId,permission,createdTime,modifiedTime)
+		values
+			(#{name},#{url},#{type},#{sort},#{parentId},
+			#{permission},NOW(),NOW())
+			
+	</insert>
+	<!-- 根据id查询菜单信息 -->
+	<select id="findMapById" resultType="map">
+		select 
+			m.name,
+			m.url,
+			m.type,
+			m.sort,
+			m.parentId,
+			m.permission,
+			(select p.name from sys_menus p where p.id = m.parentId) as parentName
+		from 
+			sys_menus m
+		where
+			m.id = #{id}
+	</select>
+	<!-- 更新菜单信息 -->
+	<update id="updateObject" 
+	        parameterType="cn.tedu.ttms.system.entity.SysMenu">
+		update sys_menus
+		set
+			name= #{name},
+			url = #{url},
+			type = #{type},
+			sort = #{sort},
+			parentId = #{parentId},
+			permission = #{permission},
+			modifiedTime = NOW()
+		where id = #{id}
+	</update>
+	<!-- 查询要删除的菜单是否有子菜单 -->
+	<select id="hasChild" resultType="java.lang.Integer">
+		select count(*)
+		from  sys_menus
+		where parentId = #{menuId}
+	</select>
+	<!-- 删除菜单按钮 -->
+	<delete id="deleteObject">
+		delete from sys_menus where id = #{id}
+	</delete>
+</mapper>

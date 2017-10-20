@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration status="off">
+	<appenders>
+		<!--这个输出控制台的配置-->
+		<Console name="Console" target="SYSTEM_OUT">
+			<!-- <ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="DENY"/>
+			<PatternLayout pattern="%d{dd MMM yyyy HH\:mm\:ss.SSS} [%p] [%t] [%c] %m%n" /> -->
+			<!--  %p 输出优先级； %t 输出产生该日志事件的线程名；%c 输出所属的类目，通常就是所在类的全名；%m 输出代码中       指定的消息；%n 输出一个回车换行符，Windows平台为“/r/n”，Unix平台为“/n”。 -->
+			<PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
+		</Console>
+		<!--这个会打印出所有的信息，每次大小超过size，则这size大小的日志会自动存入按年份-月份建立的文件夹下面并进行压缩，作为存档-->
+        <RollingFile name="RollingFile" fileName="logs/TraceLog.log"
+           filePattern="logs/$${date:yyyy-MM}/log-%d{MM-dd-yyyy}-%i.log.gz">
+            <PatternLayout pattern="%d{dd MMM yyyy HH\:mm\:ss.SSS} [%p] [%t] [%c] %m%n"/>
+            <SizeBasedTriggeringPolicy size="50MB"/>
+        </RollingFile>
+	</appenders>
+	<loggers>
+		<root level="debug">
+			<appender-ref ref="Console" />
+			<!-- <appender-ref ref="RollingFile"/> --><!-- 写入到文件 -->
+		</root>
+	</loggers>
+</configuration>

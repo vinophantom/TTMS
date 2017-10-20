@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.tedu.ttms.system.dao.SysRoleDao">
+	<!-- 查询角色列表 -->
+	<select id="findPageObjects" 
+	resultType="cn.tedu.ttms.system.entity.SysRole">
+		select id,name,note
+		from sys_roles
+		<where>
+			<if test="name!=null and name!=''">
+				name LIKE CONCAT('%',#{name},'%')
+			</if>
+		</where>
+		LIMIT #{startIndex},#{pageSize}
+	</select>
+	<!-- 查询总共有多少条数据 -->
+	<select id="getRowCounts" resultType="integer">
+		select count(*) from sys_roles
+		<where>
+			<if test="name!=null and name!=''">
+				name LIKE CONCAT('%',#{name},'%')
+			</if>
+		</where>
+	</select>
+	<!-- 保存   保存成功后将生成的主键返回给实体类对象的id属性
+	useGeneratedKeys="true"：设置是否使用JDBC的getGenereatedKeys方法获取主键并赋值到keyProperty设置的领域模型属性 
+	keyProperty="id"： 用于设置返回值将赋值到Role实体类对象的哪个属性中-->
+	<insert id="insertObject"
+	  parameterType="cn.tedu.ttms.system.entity.SysRole"
+	  useGeneratedKeys="true"
+	  keyProperty="id">
+		insert into
+			sys_roles(name,note,createdTime,modifiedTime)
+		values
+			(#{name}, #{note}, NOW(), NOW())
+	</insert>
+	
+	<!-- 根据id查询角色信息 -->
+	<select id="findObjectById" 
+	 resultType="cn.tedu.ttms.system.entity.SysRole">
+		select
+		    id,
+			name,
+			note
+		from
+			sys_roles
+		where
+			id = #{id}
+	</select>
+	<!-- 更新角色信息 -->
+	<update id="updateObject" 
+	 parameterType="cn.tedu.ttms.system.entity.SysRole">
+		update sys_roles
+		set
+			name = #{name},
+			note = #{note},
+			modifiedTime = NOW()
+		where id = #{id}
+	</update>
+	
+	<!-- 删除角色信息 -->
+	<delete id="deleteObject" parameterType="integer">
+		delete from sys_roles where id = #{id}
+	</delete>
+	
+	<!-- 获取所有角色信息，用于创建用户选择角色 -->
+	<select id="findObjects" resultType="map">
+		select id,name
+		from sys_roles
+	</select>
+</mapper>

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.tedu.ttms.product.dao.ProductTypeDao">
+  
+    <!--查询分类信息,在客户端一个gridtree进行展示-->
+    <select id="findObjects"  resultType="map">
+      select c.*,p.name parentName
+      from tms_classes c 
+      left join tms_classes p
+      on c.parentId=p.id
+      </select>
+    <!-- 查询分类节点信息,在客户端以ztree形式进行展示 -->
+    <select id="findZtreeNodes"
+     resultType="map">
+       select id,parentId,name
+       from tms_classes;
+    </select>
+    <!--判定分类下否还有子分类:
+         策略:统计哪些分类的parentId为我们传入的id,
+         假如统计结果为0,表示此id下没有子分类.
+     -->
+    <select id="hasChilds" 
+      resultType="integer">
+      select count(*)
+      from tms_classes
+      where parentId=#{id}
+    </select>
+    <!-- 根据id执行删除动作 -->
+    <delete id="deleteObject" parameterType="integer">
+      delete from tms_classes
+      where id=#{id}
+    </delete>
+    <!-- useGeneratedKeys 表示使用自增长的列的值
+         keyProperty表示哪一列的值是自增长的 -->
+    <insert id="insertObject" 
+            parameterType="productType"
+            useGeneratedKeys="true"
+            keyProperty="id">
+         insert into tms_classes
+         (
+          id,
+          name,
+          sort,
+          parentId,
+          note,
+          createdTime,
+          modifiedTime,
+          createdUser,
+          modifiedUser
+         )values(
+          #{id},
+          #{name},
+          #{sort},
+          #{parentId},
+          #{note},
+          NOW(),
+          NOW(),
+          #{createdUser},
+          #{modifiedUser}
+         )
+    </insert>
+    <!-- 根据id获取数据需要取多表中数据时,结果
+        通常要封装到map中 -->
+    <select id="findMapById" resultType="map">
+         select c.*,p.name parentName 
+         from tms_classes c left join tms_classes p
+         on c.parentId=p.id
+         where c.id=#{id}
+    </select>
+    <update id="updateObject"
+        parameterType="productType">
+         update tms_classes
+         set
+         name=#{name},
+         parentId=#{parentId},
+         note=#{note},
+         modifiedTime=now(),
+         modifiedUser=#{modifiedUser}
+         where id=#{id}
+    </update>
+</mapper> 

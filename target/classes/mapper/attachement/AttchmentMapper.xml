@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.tedu.ttms.attachment.dao.AttachmentDao">
+   <!-- 根据摘要统计记录个数,
+        结果为0则表示没有找到对应摘要的记录 -->
+   <select id="getRowCountByDigest" 
+     resultType="int">
+       select count(*)
+       from tms_attachements
+       where fileDisgest=#{fileDisgest}
+   </select>
+   
+   <select id="findObjects"
+     resultType="cn.tedu.ttms.attachment.entity.Attachment">
+     select *
+     from tms_attachements;
+   </select>
+   
+   <select id="findObjectById"
+       parameterType="integer"
+       resultType="cn.tedu.ttms.attachment.entity.Attachment">
+       select *
+       from tms_attachements
+       where id=#{id}
+   </select>
+   <insert id="insertObject" 
+      parameterType="cn.tedu.ttms.attachment.entity.Attachment">
+      insert into tms_attachements(
+      title,
+      fileName,
+      contentType,
+      filePath,
+      fileDisgest,
+      athType,
+      belongId,
+      createdUser,
+      modifiedUser,
+      createdTime,
+      modifiedTime
+      )values(
+      #{title},
+      #{fileName},
+      #{contentType},
+      #{filePath},
+      #{fileDisgest},
+      #{athType},
+      #{belongId},
+      #{createdUser},
+      #{modifiedUser},
+      NOW(),
+      NOW()
+      );
+   </insert>
+    
+</mapper> 
